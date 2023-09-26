@@ -1,0 +1,70 @@
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.navbar {
+    height: 56px;
+}
+
+
+#main {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#leftpane {
+    transition: width 0.8s ease;
+}
+
+#sidebar {
+    overflow-x: hidden;
+    overflow-y: scroll !important;
+}
+
+::-webkit-scrollbar {
+    width: 2px;
+    /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-thumb {
+    background: #BBBBC6;
+    border-radius: 14px;
+    /* Color of the scrollbar thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #ffffff;
+    /* Color of the scrollbar thumb on hover */
+}
+
+::-webkit-scrollbar-track {
+    background: none;
+    /* Remove the background of the scrollbar track */
+}
+
+/* Hide scrollbar buttons */
+::-webkit-scrollbar-button {
+    display: none;
+}
+
+#show-sidebar {
+    display: none;
+}
+
+@media screen and (max-width: 768px) {
+    /* #leftpane {
+        width: 0;
+    } */
+
+    .row>[id="sidebar"] {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+}
