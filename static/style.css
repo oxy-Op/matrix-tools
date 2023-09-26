@@ -51,20 +51,16 @@ body {
     display: none;
 }
 
-#show-sidebar {
-    display: none;
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
+
+
 @media screen and (max-width: 768px) {
-    /* #leftpane {
+    #leftpane {
         width: 0;
-    } */
-
-    .row>[id="sidebar"] {
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
     }
-
 }
