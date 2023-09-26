@@ -57,6 +57,62 @@ const setTheme = theme => {
     }
 }
 
+// ---------------------------------------------------- //
+
+// const thrice_matrix = ```<div class="matrix" id="matrix1">
+//     <div class="row w-100">
+//         <div class="col-4">
+//             <input class="w-100" id="m1-1-1" type="number" min="-100" max="100" value="0" required="">
+//         </div>
+//         <div class="col-4">
+//             <input class="w-100" id="m1-1-2" type="number" min="-100" max="100" value="0" required="">
+//         </div>
+//         <div class="col-4">
+//             <input class="w-100" id="m1-1-3" type="number" min="-100" max="100" value="0" required="">
+//         </div>
+//     </div>
+//     <div class="row w-100">
+//         <div class="col-4">
+//             <input class="w-100" id="m1-2-1" type="number" min="-100" max="100" value="0" required="">
+//         </div>
+//         <div class="col-4">
+//             <input class="w-100" id="m1-2-2" type="number" min="-100" max="100" value="0" required="">
+//         </div>
+//         <div class="col-4">
+//             <input class="w-100" id="m1-2-3" type="number" min="-100" max="100" value="0" required="">
+//         </div>
+//     </div>
+//     <div class="row w-100">
+//         <div class="col-4">
+//             <input class="w-100" id="m1-3-1" type="number" min="-100" max="100" value="0" required="">
+//         </div>
+//         <div class="col-4">
+//             <input class="w-100" id="m1-3-2" type="number" min="-100" max="100" value="0" required="">
+//         </div>
+//         <div class="col-4">
+//             <input class="w-100" id="m1-3-3" type="number" min="-100" max="100" value="0" required="">
+//         </div>
+//     </div>
+// </div>```
+
+// const matrix1 = $('.matrix#matrix1');
+// const row1 = matrix1.find('.row.w-100').eq(0);
+// const input1_1_1 = row1.find('.col-4').eq(0).find('input');
+// const input1_1_2 = row1.find('.col-4').eq(1).find('input');
+// const input1_1_3 = row1.find('.col-4').eq(2).find('input');
+
+// const row2 = matrix1.find('.row.w-100').eq(1);
+// const input1_2_1 = row2.find('.col-4').eq(0).find('input');
+// const input1_2_2 = row2.find('.col-4').eq(1).find('input');
+// const input1_2_3 = row2.find('.col-4').eq(2).find('input');
+
+// const row3 = matrix1.find('.row.w-100').eq(2);
+// const input1_3_1 = row3.find('.col-4').eq(0).find('input');
+// const input1_3_2 = row3.find('.col-4').eq(1).find('input');
+// const input1_3_3 = row3.find('.col-4').eq(2).find('input');
+
+
+
 
 $(document).ready(() => {
     changeColorMode()
@@ -64,7 +120,92 @@ $(document).ready(() => {
     hideSidbar();
     showSidebar();
     mediaQuery();
+    switchDimension();
 })
+
+
+
+
+class Matrix {
+    constructor(id) {
+        this.id = id;
+    }
+
+    createMatrix() {
+        let matrix = $('<div>', { class: 'matrix', id: 'matrix' + this.id.toString() });
+        for (let i = 1; i <= 3; i++) {
+            matrix.append(this.createRow(i));
+        }
+        return matrix;
+    }
+    createRow(nrow) {
+        const row = $('<div>', { class: 'row w-100' });
+        for (let i = 1; i <= 3; i++) {
+            row.append(this.createCol(nrow, i));
+        }
+        return row;
+    }
+
+    createCol(row, ncol) {
+        const col = $('<div>', { class: 'col-4' });
+        col.append(this.createInput(row, ncol));
+        return col;
+    }
+
+    createInput(row, col) {
+        const input = $('<input>', { class: 'w-100', id: `m${this.id}-${row}-${col}`, type: 'number', min: '-100', max: '100', value: '0', required: true });
+        return input;
+    }
+}
+
+
+function changeDimension(element, dimension) {
+    const card = element.parents('.card')
+    const cardBody = card.find('.card-body')
+    const matrix = cardBody.find('.matrix')
+
+    if (dimension === 'twice') {
+        const lastRow = matrix.children().last()
+        const firstTwoRows = matrix.children().not(lastRow);
+        for (let row of firstTwoRows) {
+            const lastCol = $(row).children().last()
+            const firstTwoCol = $(row).children().not(lastCol)
+            for (let col of firstTwoCol) {
+                $(col).removeClass('col-4')
+                $(col).addClass('col-6')
+            }
+            lastCol.remove()
+        }
+        lastRow.remove()
+    }
+    if (dimension === 'thrice') {
+        cardBody.find('.matrix').html(thrice_matrix)
+        console.log(element);
+    }
+}
+
+function switchDimension() {
+    const twiceBtn = $('.twice')
+    const thriceBtn = $('.thrice')
+    $(twiceBtn).on('click', function () {
+        changeDimension(twiceBtn, 'twice')
+        twiceBtn.addClass('active')
+        thriceBtn.removeClass('active')
+    })
+
+    $(thriceBtn).on('click', function () {
+        changeDimension(thriceBtn, 'thrice')
+        thriceBtn.addClass('active')
+        twiceBtn.removeClass('active')
+    })
+}
+
+
+
+
+
+
+
 
 window.onresize = (function () {
     mediaQuery()
