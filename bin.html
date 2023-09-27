@@ -1,0 +1,69 @@
+const lastRow = matrix.children().last()
+const firstTwoRows = matrix.children().not(lastRow);
+for (let row of firstTwoRows) {
+const lastCol = $(row).children().last()
+const firstTwoCol = $(row).children().not(lastCol)
+for (let col of firstTwoCol) {
+$(col).removeClass('col-4')
+$(col).addClass('col-6')
+}
+lastCol.remove()
+}
+lastRow.remove()
+<div class="matrix" id="matrix1">
+    <div class="row w-100">
+        <div class="col-4">
+            <input class="w-100" id="m1-1-1" type="number" min="-100" max="100" value="0" required>
+        </div>
+        <div class="col-4">
+            <input class="w-100" id="m1-1-2" type="number" min="-100" max="100" value="0" required>
+        </div>
+        <div class="col-4">
+            <input class="w-100" id="m1-1-3" type="number" min="-100" max="100" value="0" required>
+        </div>
+    </div>
+    <div class="row w-100">
+        <div class="col-4">
+            <input class="w-100" id="m1-2-1" type="number" min="-100" max="100" value="0" required>
+        </div>
+        <div class="col-4">
+            <input class="w-100" id="m1-2-2" type="number" min="-100" max="100" value="0" required>
+        </div>
+        <div class="col-4">
+            <input class="w-100" id="m1-2-3" type="number" min="-100" max="100" value="0" required>
+        </div>
+    </div>
+    <div class="row w-100">
+        <div class="col-4">
+            <input class="w-100" id="m1-3-1" type="number" min="-100" max="100" value="0" required>
+        </div>
+        <div class="col-4">
+            <input class="w-100" id="m1-3-2" type="number" min="-100" max="100" value="0" required>
+        </div>
+        <div class="col-4">
+            <input class="w-100" id="m1-3-3" type="number" min="-100" max="100" value="0" required>
+        </div>
+    </div>
+    <div class="card" style="width: 200px;">
+        <div class="card-header d-flex justify-content-around">
+            <button class="btn btn-outline-primary twice">2x2</button>
+            <button class="btn btn-outline-primary active thrice">3x3</button>
+        </div>
+        <div class="card-body w-100">
+
+        </div>
+        <div class="card-footer">
+            <h5 class="text-center">Matrix 1</h5>
+        </div>
+    </div>
+    <!-- <div class="card" style="width: 200px;">
+                            <div class="card-header d-flex justify-content-around">
+                                <button class="btn btn-outline-primary twice">2x2</button>
+                                <button class="btn btn-outline-primary active thrice">3x3</button>
+                            </div>
+                            <div class="card-body w-100">
+                            </div>
+                            <div class="card-footer">
+                                <h5 class="text-center">Matrix 2</h5>
+                            </div>
+                        </div> -->
