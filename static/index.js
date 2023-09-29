@@ -64,7 +64,6 @@ const setTheme = (theme) => {
     }
 };
 
-// ---------------------- Matrix Multiplication------------------------- //
 
 // const matrix1 = $('.matrix#matrix1');
 // const row1 = matrix1.find('.row.w-100').eq(0);
@@ -95,7 +94,11 @@ $(document).ready(() => {
     removeMatrix3();
     checkForMatrix3();
     activeDimension();
+
 });
+
+// ---------------------- Matrix Multiplication------------------------- //
+
 
 function addCards(
     num,
@@ -195,7 +198,23 @@ class Matrix {
         });
         return input;
     }
+
+    getValues() {
+        const values = [];
+        const rows = $('#matrix' + this.id).children();
+        for (let row of rows) {
+            const cols = $(row).children();
+            const col_values = []
+            for (let col of cols) {
+                col_values.push($(col).find('input').val());
+            }
+            values.push(col_values);
+        }
+        console.log(values);
+    }
 }
+
+
 
 function generateSign() {
     const signDiv = $("<div>", { class: "sign" });
@@ -206,8 +225,6 @@ function generateSign() {
     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
     <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" /></svg>`;
     svgDiv.html(svg)
-    // const svg = $('<svg>', { xmlns: 'http://www.w3.org/2000/svg', width: '25px', height: '25px', fill: 'currentColor', class: 'bi bi-x-lg', viewBox: '0 0 16 16' }).appendTo(svgDiv);
-    // const path = $('<path>', { d: 'M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z' }).appendTo(svg);
     return signDiv;
 }
 
@@ -285,9 +302,12 @@ function changeColorMode() {
 }
 
 function hideSidbar() {
+    const mainRow = $('#main-row');
     const hideSidebarBtn = $("#hide-siderbar");
     const openSidebar = $("#show-sidebar");
     $(hideSidebarBtn).on("click", function () {
+        mainRow.removeClass('col-md-9')
+
         $("#leftpane").css("width", "0");
         $("#leftpane").addClass("g-0");
         openSidebar.show(200);
@@ -296,12 +316,17 @@ function hideSidbar() {
 
 function showSidebar(m = false) {
     const openSidebar = $("#show-sidebar");
+    const mainRow = $('#main-row');
     openSidebar.on("click", function () {
         $("#leftpane").css("width", "");
         if (m) {
             $("#leftpane").css("width", "100%");
         }
-
+        mainRow.addClass('col-md-9')
+        mainRow.on('transitionend', function () {
+            mainRow.removeClass('col-md-12')
+            mainRow.off("transitionend");
+        })
         $("#leftpane").removeClass("g-0");
         $("#show-sidebar").hide(200);
     });
