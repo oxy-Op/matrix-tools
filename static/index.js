@@ -88,13 +88,14 @@ $(document).ready(() => {
     showSidebar();
     mediaQuery();
     localStorage.getItem('matrix') ? addCards(parseInt(localStorage.getItem('matrix'))) : addCards(2);
-    // $("#cards-container").append(generateSign())
     switchDimension();
+    // createOrder(localStorage.getItem('matrix'));
     addMatrix3();
     removeMatrix3();
     checkForMatrix3();
     activeDimension();
-
+    validateInput();
+    submit();
 });
 
 // ---------------------- Matrix Multiplication------------------------- //
@@ -104,9 +105,11 @@ function addCards(
     num,
     dimension = localStorage.getItem("dimension") == "twice" ? 2 : 3
 ) {
+    const matrix = localStorage.getItem("matrix") != undefined ? parseInt(localStorage.getItem("matrix")) : 2
     $("#cards-container").empty();
     for (let i = 1; i <= num; i++) {
         $("#cards-container").append(generateCard(i, dimension));
+        localStorage.setItem('matrix', matrix)
         $("#cards-container").append(generateSign());
     }
     $('#cards-container').children().last().remove()
@@ -115,8 +118,9 @@ function addCards(
 function addMatrix3() {
     $("#add-matrix").on("click", function () {
         localStorage.setItem("matrix", "3");
-
         addCards(3);
+        // createOrder(3);
+        validateInput();
         checkForMatrix3();
     });
 }
@@ -124,6 +128,8 @@ function addMatrix3() {
 function removeMatrix3() {
     $("#remove-matrix").on("click", function () {
         addCards(2);
+        validateInput();
+        // createOrder(2)
         localStorage.setItem("matrix", "2");
         checkForMatrix3();
     });
@@ -155,6 +161,8 @@ function generateCard(id, dimension) {
     cardBody.append(new Matrix(id, dimension).createMatrix());
     return card;
 }
+
+
 class Matrix {
     constructor(id, dimension) {
         this.id = id;
@@ -194,7 +202,7 @@ class Matrix {
             min: "-100",
             max: "100",
             value: "0",
-            required: true,
+            required: false,
         });
         return input;
     }
@@ -206,15 +214,118 @@ class Matrix {
             const cols = $(row).children();
             const col_values = []
             for (let col of cols) {
-                col_values.push($(col).find('input').val());
+                col_values.push(parseFloat($(col).find('input').val()));
             }
-            values.push(col_values);
+            values.push(col_values.filter(n => !isNaN(n) && n < 100 && n > -100));
         }
-        console.log(values);
+        return values;
     }
+
 }
 
 
+function submit() {
+    $('#submit-value').on('click', function () {
+        const matrix = parseInt(localStorage.getItem('matrix'))
+        const matrices = { "matrix": matrix }
+        const iteration = localStorage.getItem('dimension') === 'twice' ? 2 : 3
+        for (i = 1; i <= iteration; i++) {
+            const matrix = new Matrix(i)
+            matrices['matrix' + i] = (matrix.getValues())
+        }
+        const data = JSON.stringify(matrices);
+        $.ajax({
+            url: "/matrix",
+            type: "POST",
+            data: data,
+            contentType: "application/json",
+            success: function (response) {
+                console.log(response);
+                resultMatrix(response, function () {
+
+                })
+            },
+            dataType: "json"
+        });
+    })
+}
+
+function resultMatrix(data, callback) {
+    resultCard(data)
+    callback();
+}
+
+function resultCard(data) {
+    const card = $('<div>', { class: 'card mb-md-0 mb-4', style: 'min-width: 200px;' });
+    const cardHeader = $('<div>', { class: 'card-header d-flex justify-content-around' }).appendTo(card);
+    const cardBody = $('<div>', { class: 'card-body w-100' }).appendTo(card);
+    const matrixDiv = $('<div>', { class: 'matrix' });
+    for (let i = 0; i < data.length; i++) {
+        const row = $('<div>', { class: 'row w-100 mb-1 flex-sm-row flex-column' });
+        for (let j = 0; j < data.length; j++) {
+            const col = $('<div>', { class: data.length === 3 ? 'col-4' : 'col-6' });
+            const badge = $('<div>', { class: 'badge bg-primary h-100 p-2 ', style: 'min-width: 50px' }).text(data[i][j]);
+            col.append(badge);
+            row.append(col);
+        }
+        matrixDiv.append(row);
+    }
+
+    cardBody.append(matrixDiv);
+    const cardFooter = $('<div>', { class: 'card-footer' }).appendTo(card);
+    const h5 = $('<h5>', { class: 'text-center' }).text('Result Matrix');
+    cardFooter.append(h5);
+    $('#result-container').empty();
+    $('#result-container').append(card);
+}
+
+function validateInput() {
+    $('input').on('input', function () {
+        if (parseFloat($(this).val()) < -100 || parseFloat($(this).val()) > 100) {
+            $(this).val("0");
+            $('#input-alert').show()
+        }
+        else {
+            $('#input-alert').hide()
+        }
+    })
+}
+
+// ! Beta
+function createSelect(matrix) {
+    const select = $('<select>', { class: 'form-select w-25', 'aria-label': 'Select order' });
+    if (matrix === 3) {
+        select.append($("<option>", { value: "m1", selected: true, text: "Matrix 1" }));
+        select.append($("<option>", { value: "m2", text: "Matrix 2" }));
+        select.append($("<option>", { value: "m3", text: "Matrix 3" }));
+    }
+    else {
+        select.append($("<option>", { value: "m1", selected: true, text: "Matrix 1" }));
+        select.append($("<option>", { value: "m2", text: "Matrix 2" }));
+    }
+    return select
+}
+
+function createOrder(matrix) {
+    $('#order').empty()
+    if (matrix === 3) {
+        for (i = 0; i < 3; i++) {
+            $('#order').append(createSelect(matrix));
+            $('#order').append(generateSign());
+        }
+    }
+    else {
+        for (i = 0; i < 2; i++) {
+            $('#order').append(createSelect(matrix));
+            $('#order').append(generateSign());
+        }
+    }
+
+    $('#order').children().last().remove()
+
+}
+
+// ! beta end
 
 function generateSign() {
     const signDiv = $("<div>", { class: "sign" });

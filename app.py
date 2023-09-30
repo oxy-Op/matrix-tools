@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, render_template
+from numpy import array
+from flask import Flask, jsonify, render_template, request
 from os import path, walk
 
 
@@ -14,10 +15,29 @@ for extra_dir in extra_dirs:
                 extra_files.append(filename)
 
 
+def matrix_calculation(data):
+    calculation = ''
+    if data['matrix'] == 2:
+        x = array(data['matrix1'])
+        y = array(data['matrix2'])
+        calculation = x @ y
+    if data['matrix'] == 3:
+        x = array(data['matrix1'])
+        y = array(data['matrix2'])
+        z = array(data['matrix3'])
+        calculation = x @ y @ z
+    return calculation.tolist()
+
 
 @app.route("/")
-def hello():
+def index():
     return render_template("index.html")
+
+@app.route('/matrix', methods=['POST'])
+def matrix():
+    result = matrix_calculation(request.json)
+    print(result)
+    return jsonify(result)
 
 if __name__ == "__main__":
     app.jinja_env.auto_reload = True
