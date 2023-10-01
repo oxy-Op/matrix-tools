@@ -40,7 +40,7 @@ def matrix():
     result = matrix_calculation(request.json)
     return jsonify(result)
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
 #     app.jinja_env.auto_reload = True
 #     app.config['TEMPLATE_AUTO_RELOAD'] = True
-#     app.run(host='0.0.0.0',debug=True, port=5200 , extra_files=extra_files)
+    app.run(host='0.0.0.0',debug=True, port=5200 )
