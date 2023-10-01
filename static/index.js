@@ -13,7 +13,6 @@ const getPreferredTheme = () => {
 };
 
 function bgOpaque(mode) {
-    // const mode = document.documentElement.attributes['data-bs-theme'].value
     const bgElement = document.getElementsByClassName("theme");
     for (let x of bgElement) {
         if (mode == "dark") {
@@ -65,21 +64,6 @@ const setTheme = (theme) => {
 };
 
 
-// const matrix1 = $('.matrix#matrix1');
-// const row1 = matrix1.find('.row.w-100').eq(0);
-// const input1_1_1 = row1.find('.col-4').eq(0).find('input');
-// const input1_1_2 = row1.find('.col-4').eq(1).find('input');
-// const input1_1_3 = row1.find('.col-4').eq(2).find('input');
-
-// const row2 = matrix1.find('.row.w-100').eq(1);
-// const input1_2_1 = row2.find('.col-4').eq(0).find('input');
-// const input1_2_2 = row2.find('.col-4').eq(1).find('input');
-// const input1_2_3 = row2.find('.col-4').eq(2).find('input');
-
-// const row3 = matrix1.find('.row.w-100').eq(2);
-// const input1_3_1 = row3.find('.col-4').eq(0).find('input');
-// const input1_3_2 = row3.find('.col-4').eq(1).find('input');
-// const input1_3_3 = row3.find('.col-4').eq(2).find('input');
 
 $(document).ready(() => {
     changeColorMode();
@@ -228,8 +212,7 @@ function submit() {
     $('#submit-value').on('click', function () {
         const matrix = parseInt(localStorage.getItem('matrix'))
         const matrices = { "matrix": matrix }
-        const iteration = localStorage.getItem('dimension') === 'twice' ? 2 : 3
-        for (i = 1; i <= iteration; i++) {
+        for (i = 1; i <= matrix; i++) {
             const matrix = new Matrix(i)
             matrices['matrix' + i] = (matrix.getValues())
         }
@@ -240,7 +223,6 @@ function submit() {
             data: data,
             contentType: "application/json",
             success: function (response) {
-                console.log(response);
                 resultMatrix(response, function () {
 
                 })
@@ -255,33 +237,45 @@ function resultMatrix(data, callback) {
     callback();
 }
 
-function resultCard(data) {
-    const card = $('<div>', { class: 'card mb-md-0 mb-4', style: 'min-width: 200px;' });
-    const cardHeader = $('<div>', { class: 'card-header d-flex justify-content-around' }).appendTo(card);
-    const cardBody = $('<div>', { class: 'card-body w-100' }).appendTo(card);
-    const matrixDiv = $('<div>', { class: 'matrix' });
-    for (let i = 0; i < data.length; i++) {
-        const row = $('<div>', { class: 'row w-100 mb-1 flex-sm-row flex-column' });
-        for (let j = 0; j < data.length; j++) {
-            const col = $('<div>', { class: data.length === 3 ? 'col-4' : 'col-6' });
-            const badge = $('<div>', { class: 'badge bg-primary h-100 p-2 ', style: 'min-width: 50px' }).text(data[i][j]);
-            col.append(badge);
-            row.append(col);
+function resultCard(result) {
+    if (result.status === 'success') {
+        const data = result['matrix']
+        const card = $('<div>', { class: 'card mb-md-0 mb-4', style: 'min-width: 200px;' });
+        const cardHeader = $('<div>', { class: 'card-header d-flex justify-content-around' }).appendTo(card);
+        const cardBody = $('<div>', { class: 'card-body w-100' }).appendTo(card);
+        const matrixDiv = $('<div>', { class: 'matrix' });
+        for (let i = 0; i < data.length; i++) {
+            const row = $('<div>', { class: 'row w-100 mb-1 flex-sm-row flex-column' });
+            for (let j = 0; j < data.length; j++) {
+                const col = $('<div>', { class: data.length === 3 ? 'col-4' : 'col-6' });
+                const badge = $('<div>', { class: 'badge bg-primary h-100 p-2 ', style: 'min-width: 50px' }).text(data[i][j]);
+                col.append(badge);
+                row.append(col);
+            }
+            matrixDiv.append(row);
         }
-        matrixDiv.append(row);
-    }
 
-    cardBody.append(matrixDiv);
-    const cardFooter = $('<div>', { class: 'card-footer' }).appendTo(card);
-    const h5 = $('<h5>', { class: 'text-center' }).text('Result Matrix');
-    cardFooter.append(h5);
-    $('#result-container').empty();
-    $('#result-container').append(card);
+        cardBody.append(matrixDiv);
+        const cardFooter = $('<div>', { class: 'card-footer' }).appendTo(card);
+        const h5 = $('<h5>', { class: 'text-center' }).text('Result Matrix');
+        cardFooter.append(h5);
+        $('#result-container').empty();
+        $('#result-container').append(card);
+    }
+    if (result.status === 'error') {
+        const alert = `
+        <div class="alert alert-danger mt-3 alert-dismissible fade show">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            ${((result.error)).replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())}
+        </div>
+        `
+        $('#result-container').html(alert);
+    }
 }
 
 function validateInput() {
     $('input').on('input', function () {
-        if (parseFloat($(this).val()) < -100 || parseFloat($(this).val()) > 100) {
+        if (parseFloat($(this).val()) < -100 || parseFloat($(this).val()) > 100 || $(this).val() === "e") {
             $(this).val("0");
             $('#input-alert').show()
         }
@@ -289,6 +283,15 @@ function validateInput() {
             $('#input-alert').hide()
         }
     })
+
+    const invalidChars = ["-", "+", "e", "E"];
+
+    $('input').on("keydown", function (e) {
+        if (invalidChars.includes(e.key)) {
+            e.preventDefault();
+        }
+    });
+
 }
 
 // ! Beta
@@ -381,7 +384,7 @@ function switchDimension() {
     });
 }
 
-// ------------Responsiveness and Color modes --------------- //
+// ------------ Responsiveness, sidebar and Color modes --------------- //
 
 window.onresize = function () {
     mediaQuery();

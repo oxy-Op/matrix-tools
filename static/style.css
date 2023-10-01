@@ -66,6 +66,7 @@ input::-webkit-inner-spin-button {
     display: none;
 }
 
+
 @media screen and (max-width: 768px) {
     #leftpane {
         width: 0;
