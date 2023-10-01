@@ -14,6 +14,28 @@
 - [ ] Addition of matrices
 - [ ] Subtraction of matrices
 
+## Local Installation
+
+- Install
+  ```bash
+   git clone https://github.com/oxy-Op/matrix-tools.git
+   cd matrix-tools
+  ```
+- Install requirements
+  
+   ```bash
+   pip install -r requirements.txt
+   ```
+- Run
+    ```bash
+    python app.py
+    ```
+    or
+  ```
+  flask run
+  ```
+
+
 ### Credits
 
 **This web application was made by [oxy-Op](https://github.com/oxy-Op)**
