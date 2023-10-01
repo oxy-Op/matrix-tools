@@ -19,13 +19,5 @@
       "src": "/(.*)",
       "dest": "app.py"
     }
-  ],
-  "env": {
-    "PYTHONUNBUFFERED": "true"
-  },
-  "functions": {
-    "api/**/*.py": {
-      "runtime": "@vercel/python"
-    }
-  }
+  ]
 }
