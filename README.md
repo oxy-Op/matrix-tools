@@ -6,6 +6,7 @@
 ## Technology
 
 - Numpy(Python) for processing calculations
+- Flask(Python) for back-end and server
 - Bootstrap for front-end
 - Jquery(Js) for displaying and manipulating elements
 
